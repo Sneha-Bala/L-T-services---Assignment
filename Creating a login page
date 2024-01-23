@@ -1,0 +1,121 @@
+Basic Registration Module (Languages which can be used, HTML, CSS, Javascript (Node, Express, React), SQL/MongoDB)
+
+1) Webpage with register and signup button.
+2) Once clicked on register button a pop up form with fields such as Name, Email ID, Phone Number, should appear (all fields should be mandatory),
+3) Verification mail with activation link to be sent to Email ID.
+4) Once registered; user should be able to login.
+5) If user is not registered, a notification mentioning ‘user is not registered’ should appear, and if user is registered, the page should take the user to next screen.
+6) Next screen should say. - Welcome “UserName”.
+
+HTML(index.html)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Module</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <button id="registerBtn">Register</button>
+
+  <div id="registerForm" class="hidden">
+    <form id="registrationForm">
+      <label for="name">Name:</label>
+      <input type="text" id="name" required>
+
+      <label for="email">Email ID:</label>
+      <input type="email" id="email" required>
+
+      <label for="phone">Phone Number:</label>
+      <input type="tel" id="phone" required>
+
+      <button type="submit">Register</button>
+    </form>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
+
+CSS (style.css)
+.hidden {
+  display: none;
+}
+
+JavaScript (main.jss)
+document.addEventListener('DOMContentLoaded', function () {
+  const registerBtn = document.getElementById('registerBtn');
+  const registerForm = document.getElementById('registerForm');
+
+  registerBtn.addEventListener('click', function () {
+    registerForm.classList.remove('hidden');
+  });
+
+  registerForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+
+    // Send registration data to server (Node.js/Express) for further processing
+    // Include logic to send a verification email with an activation link
+
+    // For simplicity, you can simulate success and move to the next screen
+    const isRegistered = true; // Replace with actual logic
+
+    if (isRegistered) {
+      alert(`Welcome ${name}`);
+      // Redirect to the next screen or perform other actions
+    } else {
+      alert('User is not registered');
+    }
+  });
+});
+
+Node.js / express server
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const nodemailer = require('nodemailer');
+
+const app = express();
+const PORT = 3000;
+
+// MongoDB connection
+mongoose.connect('mongodb://localhost/registration_module', { useNewUrlParser: true, useUnifiedTopology: true });
+
+// Define mongoose schema and model for user
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  phone: String,
+  // Add more fields as needed
+});
+
+const User = mongoose.model('User', userSchema);
+
+// Body parser middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Serve static files (HTML, CSS, JS)
+app.use(express.static('public'));
+
+// Handle registration form submission
+app.post('/register', async (req, res) => {
+  const { name, email, phone } = req.body;
+
+  // Save user data to MongoDB
+  const newUser = new User({ name, email, phone });
+  await newUser.save();
+
+  // Send verification email (nodemailer logic here)
+
+  res.send({ success: true });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+we can replace the placeholder logic with actual implementations for sending verification emails, handling user registration in the database, etc
